@@ -20,7 +20,7 @@ dependencies {
     implementation 'com.pedropathing:revhub:3.0.2'
     //DO NOT UPDATE PEDRO PATHING TUNING
     //noinspection NewerVersionAvailable
-    implementation 'com.pedropathing:tuning:1.0.1'
+    implementation 'com.pedropathing:tuning:1.0.3'
     //panels
     implementation "com.bylazar:fullpanels:1.0.19"
 }
