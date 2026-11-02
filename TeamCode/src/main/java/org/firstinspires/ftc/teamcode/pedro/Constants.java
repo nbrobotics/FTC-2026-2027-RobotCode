@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.pedro;
 
+import com.pedropathing.algorithm.Foresight;
 import com.pedropathing.algorithm.ForesightConfig;
 import com.pedropathing.controllers.Controller;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Matrix;
 import com.pedropathing.math.Vector2D;
+import com.pedropathing.revhub.drivetrains.Mecanum;
 import com.pedropathing.revhub.drivetrains.MecanumConfig;
 import com.pedropathing.revhub.localizers.PinpointConfig;
+import com.pedropathing.revhub.localizers.PinpointLocalizer;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -38,32 +41,35 @@ public class Constants {
 
     public static ForesightConfig foresightConfig = new ForesightConfig(
             c -> {
-                Controller primaryTranslationalForward = Controller.proportional(0.49889314098596477);
-                Controller secondaryTranslationalForward = Controller.proportional(0.1843276849240724);
-                Controller primaryTranslationalLateral = Controller.proportional(0.3304930456618351);
-                Controller secondaryTranslationalLateral = Controller.proportional(0.12210834943522629);
+                Controller primaryTranslationalForward = Controller.proportional(0.26481804995289376);
+                Controller secondaryTranslationalForward = Controller.proportional(0.09784319338897766);
+                Controller primaryTranslationalLateral = Controller.proportional(0.3687237773716374);
+                Controller secondaryTranslationalLateral = Controller.proportional(0.13623358325803295);
 
                 c.forwardTranslational.set(Controller.piecewise(secondaryTranslationalForward).put(2.5, primaryTranslationalForward));
                 c.strafeTranslational.set(Controller.piecewise(secondaryTranslationalLateral).put(2.5, primaryTranslationalLateral));
 
-                c.coast.set(Controller.proportionalFeedforward(0.015602578797597908));
-                c.brake.set(Controller.proportionalFeedforward(0.013262191977958223));
+                c.coast.set(Controller.proportionalFeedforward(0.01685358416055541));
+                c.brake.set(Controller.proportionalFeedforward(0.0143255465364721));
 
-                c.headingFeedback.set(Controller.proportional(3.4654129518624535));
-                c.headingBrakeCoefficients.set(Vector2D.cartesian(0.042004810426151645, 0.005371946189032125));
+                c.headingFeedback.set(Controller.proportional(4.301674250343122));
+                c.headingBrakeCoefficients.set(Vector2D.cartesian(0.046203177785432155, 0.005541296521084404));
 
-                c.linearBrakeCoefficients.set(Matrix.diag(0.05587927471572838, 0.055667885026347556));
-                c.quadraticBrakeCoefficients.set(Matrix.diag(0.0013635721692877318, 0.0015181770554949388));
+                c.linearBrakeCoefficients.set(Matrix.diag(0.06762810194472141, 0.09432749289591283));
+                c.quadraticBrakeCoefficients.set(Matrix.diag(0.0013148982451771272, 5.776236555866488E-4));
 
-                c.maxAchievableForwardVelocity.set(66.32154189604987);
-                c.maxAchievableStrafeVelocity.set(56.921866427354004);
-                c.naturalForwardDeceleration.set(42.358157108998974);
-                c.naturalStrafeDeceleration.set(59.30066979875795);
+                c.maxAchievableForwardVelocity.set(66.40903900130596);
+                c.maxAchievableStrafeVelocity.set(52.206001781626455);
+                c.naturalForwardDeceleration.set(35.290824588529254);
+                c.naturalStrafeDeceleration.set(69.3288804546026);
             }
     );
-    public static Follower create(HardwareMap h) {
-        // return new Follower(Drivetrain, Localizer, Foresight);
 
-        return null;
+    public static Follower create(HardwareMap h) {
+        return new Follower(
+                new PinpointLocalizer(h, localizerConfig),
+                new Mecanum(h, drivetrainConfig),
+                new Foresight(foresightConfig)
+        );
     }
 }

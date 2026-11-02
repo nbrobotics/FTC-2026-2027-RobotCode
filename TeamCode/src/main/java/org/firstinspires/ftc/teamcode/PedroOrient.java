@@ -24,6 +24,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -33,6 +34,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import com.pedropathing.drivetrain.DrivePowers;
 import com.pedropathing.follower.ManualDrive;
@@ -89,6 +92,8 @@ public class PedroOrient extends OpMode {
         // Init PedroPathing hardwareMap
         follower = Constants.create(hardwareMap);
 
+
+
         /*
          * Initialize the non-drivetrain hardware variables. Note that the strings used here as parameters
          * to 'get' must correspond to the names assigned during the robot configuration
@@ -134,6 +139,7 @@ public class PedroOrient extends OpMode {
         rightIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
         windmillServo.setDirection(DcMotorSimple.Direction.REVERSE);
 
+
         /*
          * Tell the driver that initialization is complete.
          */
@@ -151,7 +157,9 @@ public class PedroOrient extends OpMode {
      * Code to run ONCE when the driver hits START
      */
     @Override
-    public void start() {
+    public void start(){
+        follower.setPose(OpModeStorage.autonomousEndPose);
+        follower.update();
     }
 
     /*
@@ -160,26 +168,29 @@ public class PedroOrient extends OpMode {
     @Override
     public void loop() {
 
-        DrivePowers powers = ManualDrive.fieldCentric(
-                -gamepad1.left_stick_y,
-                gamepad1.left_stick_x,
-                gamepad1.right_stick_x,
-                follower.pose().heading()
-        );
-        // Set drivetrain to hold position if sticks are released
-        ManualDrive.driveOrHold(follower, powers);
 
         // Right Corner Relocalize button
         if (gamepad1.startWasPressed()) {
             Pose cornerPose = new Pose(8.66, 8.89, Math.toRadians(0));
             follower.setPose(cornerPose); // overrides our pose
+            follower.update();
         }
 
         // Left Corner Relocalize button
         if (gamepad1.backWasPressed()) {
             Pose cornerPose = new Pose(8.66, 132.61, Math.toRadians(0));
             follower.setPose(cornerPose); // overrides our pose
+            follower.update();
         }
+
+        DrivePowers powers = ManualDrive.fieldCentric(
+                -gamepad1.left_stick_y,
+                -gamepad1.left_stick_x,
+                -gamepad1.right_stick_x,
+                follower.pose().heading()
+        );
+        // Set drivetrain to hold position if sticks are released
+        ManualDrive.driveOrHold(follower, powers);
 
 
         follower.update();
@@ -226,6 +237,12 @@ public class PedroOrient extends OpMode {
          * Show motor powers on the Driver Station via telemetry.
          */
         telemetry.addData("Launcher RPM", currentRpm);
+
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        Telemetry dashboardTelemetry = dashboard.getTelemetry();
+
+        dashboardTelemetry.addData("launcher rpm", currentRpm);
+        dashboardTelemetry.update();
     }
 
     /*
