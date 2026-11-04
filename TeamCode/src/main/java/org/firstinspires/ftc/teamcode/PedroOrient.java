@@ -24,7 +24,6 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -35,7 +34,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import com.pedropathing.drivetrain.DrivePowers;
 import com.pedropathing.follower.ManualDrive;
@@ -189,9 +187,15 @@ public class PedroOrient extends OpMode {
                 -gamepad1.right_stick_x,
                 follower.pose().heading()
         );
-        // Set drivetrain to hold position if sticks are released
-        ManualDrive.driveOrHold(follower, powers);
 
+        // If we are pressing the left bumper, override drive holding
+        // This is done to allow for the robot to relocalized,
+        // as if you don't do this, it tries to go back to its previous reported position.
+        if (gamepad1.leftBumperWasPressed()) {
+            follower.manual(powers); // Field oriented without holding
+        } else {
+            ManualDrive.driveOrHold(follower, powers); // Field oriented with holding
+        }
 
         follower.update();
         Pose robotPose = follower.pose(); // returns a Pose object
@@ -237,12 +241,6 @@ public class PedroOrient extends OpMode {
          * Show motor powers on the Driver Station via telemetry.
          */
         telemetry.addData("Launcher RPM", currentRpm);
-
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        Telemetry dashboardTelemetry = dashboard.getTelemetry();
-
-        dashboardTelemetry.addData("launcher rpm", currentRpm);
-        dashboardTelemetry.update();
     }
 
     /*
