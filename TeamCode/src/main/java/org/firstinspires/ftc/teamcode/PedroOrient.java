@@ -75,8 +75,10 @@ public class PedroOrient extends OpMode {
      * in the launch() function to only run the windmill servo when the motor is spinning fast
      * enough to make a successful throw.
      */
-    public final int LAUNCHER_TARGET_VELOCITY = 1250; //2678 RPM
-    public final int LAUNCHER_MIN_VELOCITY = 1200; //2571 RPM
+    public final int LAUNCHER_TARGET_VELOCITY = OpModeStorage.LAUNCHER_TARGET_VELOCITY; //2678 RPM
+    public final int LAUNCHER_MIN_VELOCITY = OpModeStorage.LAUNCHER_MIN_VELOCITY; //2571 RPM
+
+    public boolean resistMovement = true;
     double TICKS_PER_REV = 28;
 
     // Create a variable to set to the intake.
@@ -192,9 +194,13 @@ public class PedroOrient extends OpMode {
         // This is done to allow for the robot to relocalized,
         // as if you don't do this, it tries to go back to its previous reported position.
         if (gamepad1.leftBumperWasPressed()) {
-            follower.manual(powers); // Field oriented without holding
+            resistMovement = !resistMovement;
+        }
+
+        if (resistMovement) {
+            ManualDrive.driveOrHold(follower, powers);
         } else {
-            ManualDrive.driveOrHold(follower, powers); // Field oriented with holding
+            follower.manual(powers);
         }
 
         follower.update();
