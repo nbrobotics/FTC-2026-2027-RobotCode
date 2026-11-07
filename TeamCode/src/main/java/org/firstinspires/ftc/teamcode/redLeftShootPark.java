@@ -34,9 +34,9 @@ public class redLeftShootPark extends LinearOpMode {
 
     // poses (points where the robot goes)
     private final Pose start = poseFactory.of(8.66, 132.61, 0);
-    private final Pose path1 = poseFactory.of(57.4521, 120.7125, 270);
-    private final Pose point2Start = poseFactory.of(57.4521, 120.7125, 270);
-    private final Pose point2 = poseFactory.of(9.7597, 91.9499, 270);
+    private final Pose path1 = poseFactory.of(58.1581, 114.0825, 270);
+    private final Pose point2Start = poseFactory.of(58.1581, 114.0825, 270);
+    private final Pose point2 = poseFactory.of(10.4225, 91.5458, 0);
 
     // Autonomous routine
 

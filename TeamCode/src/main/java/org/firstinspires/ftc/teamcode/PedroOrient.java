@@ -171,15 +171,15 @@ public class PedroOrient extends OpMode {
 
         // Right Corner Relocalize button
         if (gamepad1.startWasPressed()) {
-            Pose cornerPose = new Pose(8.66, 8.89, Math.toRadians(0));
-            follower.setPose(cornerPose); // overrides our pose
+            Pose cornerPoseA = new Pose(8.66, 8.89, Math.toRadians(0));
+            follower.setPose(cornerPoseA); // overrides our pose
             follower.update();
         }
 
         // Left Corner Relocalize button
         if (gamepad1.backWasPressed()) {
-            Pose cornerPose = new Pose(8.66, 132.61, Math.toRadians(0));
-            follower.setPose(cornerPose); // overrides our pose
+            Pose cornerPoseB = new Pose(8.66, 132.61, Math.toRadians(0));
+            follower.setPose(cornerPoseB); // overrides our pose
             follower.update();
         }
 
