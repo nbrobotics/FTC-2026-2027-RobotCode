@@ -11,8 +11,8 @@ import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import static com.pedropathing.ivy.Scheduler.schedule;
 import static com.pedropathing.ivy.commands.Commands.*;
-import static com.pedropathing.ivy.groups.Groups.*;
-import static com.pedropathing.ivy.pedro.PedroCommands.*;
+import static com.pedropathing.ivy.groups.Groups.sequential;
+import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -25,20 +25,18 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 import java.util.LinkedHashMap;
 import java.util.function.BooleanSupplier;
 
-@Autonomous(name = "[RED LEFT] Shoot and Park", group = "Autonomous")
-public class redLeftShootPark extends LinearOpMode {
+@Autonomous(name = "RIGHT FULL Low park", group = "Autonomous")
+public class rightLSPLow extends LinearOpMode {
 
     private Follower follower;
 
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
-    // poses (points where the robot goes)
-    private final Pose start = poseFactory.of(8.66, 132.61, 0);
-    private final Pose path1 = poseFactory.of(58.1581, 114.0825, 270);
-    private final Pose point2Start = poseFactory.of(58.1581, 114.0825, 270);
-    private final Pose point2 = poseFactory.of(10.4225, 91.5458, 0);
-
-    // Autonomous routine
+    private final Pose start = poseFactory.of(55.75, 8.75, 90);
+    private final Pose positionForLaunch = poseFactory.of(57.75, 31.75, 90);
+    private final Pose goParkStart = poseFactory.of(57.75, 31.75, 90);
+    private final Pose goPark = poseFactory.of(10.75, 88.75, 0);
+    private final Pose goParkControl1 = poseFactory.of(11.75, 39.75, 0);
 
     @Override
     public void runOpMode() {
@@ -53,7 +51,7 @@ public class redLeftShootPark extends LinearOpMode {
         launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(40, 0, 0, 12.5));
 
-        Command runWindmill = instant(() -> windmillServo.setPower(1));
+        Command runWindmill = instant(() -> windmillServo.setPower(-1));
         Command stopWindmill = instant(() -> windmillServo.setPower(0));
         Command runLauncher = instant(() -> launcher.setVelocity(OpModeStorage.LAUNCHER_TARGET_VELOCITY));
         Command stopLauncher = instant(() -> launcher.setVelocity(0));
@@ -63,18 +61,16 @@ public class redLeftShootPark extends LinearOpMode {
         cases.put(() -> launcher.getVelocity() >= OpModeStorage.LAUNCHER_MIN_VELOCITY, runWindmill);
         cases.put(() -> launcher.getVelocity() <= OpModeStorage.LAUNCHER_MIN_VELOCITY, stopWindmill);
 
+        Command handleWindmill = branch(cases);
+        Command windmillLoop = Groups.loop(handleWindmill);
 
-        // This is the sequence of commands that will be run IN ORDER
         Command autoRoutine = sequential(
-                follow(follower, path1()),
+                follow(follower, positionForLaunch()),
                 runLauncher,
                 allowLaunchTime,
                 stopLauncher,
-                follow(follower, path2())
+                follow(follower, goPark())
         );
-
-        Command handleWindmill = branch(cases);
-        Command windmillLoop = Groups.loop(handleWindmill);
 
         waitForStart();
         schedule(windmillLoop);
@@ -95,18 +91,13 @@ public class redLeftShootPark extends LinearOpMode {
 
             telemetry.update();
         }
-
-        OpModeStorage.autonomousEndPose = follower.pose(); //saves your position in that file
     }
 
-
-    public Path path1() {
-        return Paths.line(start, path1).linear(start, path1);
+    public Path positionForLaunch() {
+        return Paths.line(start, positionForLaunch).linear(start, positionForLaunch);
     }
 
-    public Path path2() {
-        return Paths.line(point2Start, point2).linear(point2Start, point2);
+    public Path goPark() {
+        return Paths.curve(goParkStart, goParkControl1, goPark).linear(goParkStart, goPark);
     }
 }
-
-// lane was here

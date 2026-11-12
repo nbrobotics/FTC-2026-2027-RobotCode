@@ -24,6 +24,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
+import static org.firstinspires.ftc.teamcode.Prism.GoBildaPrismDriver.Artboard;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -34,6 +35,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Prism.GoBildaPrismDriver;
+import org.firstinspires.ftc.teamcode.Prism.GoBildaPrismDriver.*;
 
 /*
  * This file includes a teleop (driver-controlled) file for the goBILDA® StarterBot with Mecanum
@@ -65,6 +68,8 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
     private CRServo rightIntakeServo = null;
     private CRServo windmillServo = null;
     private IMU imu;
+
+    private GoBildaPrismDriver prism;
 
 
     /*
@@ -105,6 +110,8 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
          * to 'get' must correspond to the names assigned during the robot configuration
          * step.
          */
+
+        prism = hardwareMap.get(GoBildaPrismDriver.class, "prism");
         leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
@@ -218,6 +225,8 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
          */
         mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
+
+
         /*
          * Set the intake power variable to equal the right trigger, minus the left trigger.
          * Each trigger outputs a signal from 0-1, with 0 as fully released, and 1 fully depressed.
@@ -258,6 +267,7 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
      */
     @Override
     public void stop() {
+        prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_7);
     }
 
     void mecanumDrive(double forward, double strafe, double rotate) {
@@ -294,9 +304,11 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
          * Otherwise, we start spinning the launcher down.
          */
         if (gamepad1.right_bumper) {
+            prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_1);
             launcher.setVelocity(LAUNCHER_TARGET_VELOCITY);
         } else {
             launcher.setVelocity(0);
+            prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_2);
         }
 
         /*
