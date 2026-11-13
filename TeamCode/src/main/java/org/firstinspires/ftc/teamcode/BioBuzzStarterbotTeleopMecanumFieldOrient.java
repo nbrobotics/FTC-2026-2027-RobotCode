@@ -69,6 +69,8 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
     private CRServo windmillServo = null;
     private IMU imu;
 
+    public boolean lightidle = true;
+
     private GoBildaPrismDriver prism;
 
 
@@ -243,6 +245,20 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
 
         launch();
 
+        if (gamepad1.right_bumper) {
+            prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_1);
+            lightidle = false;
+        } else if (gamepad1.right_trigger_pressed) {
+            prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_2);
+            lightidle = false;
+        } else if (gamepad1.left_trigger_pressed) {
+            prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_3);
+            lightidle = false;
+        } else if (!lightidle) {
+            prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_4);
+            lightidle = true;
+            }
+
         /*
          * Here we set our intake motor and servos to their intake power. The order of operations
          * here is important though. The gamepad triggers define the starting point for the intake
@@ -304,11 +320,9 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
          * Otherwise, we start spinning the launcher down.
          */
         if (gamepad1.right_bumper) {
-            prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_1);
             launcher.setVelocity(LAUNCHER_TARGET_VELOCITY);
         } else {
             launcher.setVelocity(0);
-            prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_2);
         }
 
         /*

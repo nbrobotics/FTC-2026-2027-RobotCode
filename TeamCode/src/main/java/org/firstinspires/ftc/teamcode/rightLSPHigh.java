@@ -22,6 +22,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.firstinspires.ftc.teamcode.Prism.GoBildaPrismDriver;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
 import java.util.LinkedHashMap;
@@ -80,6 +81,8 @@ public class rightLSPHigh extends LinearOpMode {
         schedule(autoRoutine);
 
         while (opModeIsActive()) {
+            GoBildaPrismDriver prism = hardwareMap.get(GoBildaPrismDriver.class, "prism");
+            prism.loadAnimationsFromArtboard(GoBildaPrismDriver.Artboard.ARTBOARD_4);
             follower.update();
             Scheduler.execute();
 
@@ -94,6 +97,8 @@ public class rightLSPHigh extends LinearOpMode {
 
             telemetry.update();
         }
+        GoBildaPrismDriver prism = hardwareMap.get(GoBildaPrismDriver.class, "prism");
+        prism.loadAnimationsFromArtboard(GoBildaPrismDriver.Artboard.ARTBOARD_7);
     }
 
     public Path positionForLaunch() {
