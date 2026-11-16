@@ -25,7 +25,7 @@ public class leaveAndParkHigh extends LinearOpMode {
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
     private final Pose start = poseFactory.of(8.75, 57.75, 90);
-    private final Pose path1 = poseFactory.of(8.75, 123.75, 90);
+    private final Pose path1 = poseFactory.of(10.75, 122.75, 90);
 
     // Autonomous routine
     public Command autoRoutine() {

@@ -27,7 +27,7 @@ public class leaveAndParkLow extends LinearOpMode {
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
     private final Pose start = poseFactory.of(8.75, 132.75, 90);
-    private final Pose path1 = poseFactory.of(8.75, 89.75, 90);
+    private final Pose path1 = poseFactory.of(9.75, 89.75, 90);
 
     // Autonomous routine
     public Command autoRoutine() {
