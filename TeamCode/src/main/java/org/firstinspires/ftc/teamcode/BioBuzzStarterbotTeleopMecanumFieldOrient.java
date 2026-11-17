@@ -245,8 +245,12 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
 
         launch();
 
-        if (gamepad1.right_bumper) {
-            prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_1);
+        if (gamepad1.left_bumper) {
+            if (launcher.getVelocity() >= OpModeStorage.LAUNCHER_MIN_VELOCITY) {
+                prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_5);
+            } else {
+                prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_1);
+            }
             lightidle = false;
         } else if (gamepad1.right_trigger_pressed) {
             prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_2);
@@ -258,6 +262,8 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
             prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_4);
             lightidle = true;
             }
+
+        unjam();
 
         /*
          * Here we set our intake motor and servos to their intake power. The order of operations
@@ -271,11 +277,18 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
         leftIntakeServo.setPower(intakePower);
         rightIntakeServo.setPower(intakePower);
 
+
         /*
          * Show motor powers on the Driver Station via telemetry.
          */
         telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftFrontPower, rightFrontPower);
         telemetry.addData("Triggers", "left (%.2f, right (%.2f)",gamepad1.left_trigger, gamepad1.right_trigger);
+    }
+
+    private void unjam() {
+        if (gamepad1.b) {
+            windmillServo.setPower(-1);
+        }
     }
 
     /*
@@ -319,7 +332,7 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
          * holding down the right gamepad. If they are, then we want to start spinning up the launcher.
          * Otherwise, we start spinning the launcher down.
          */
-        if (gamepad1.right_bumper) {
+        if (gamepad1.left_bumper) {
             launcher.setVelocity(LAUNCHER_TARGET_VELOCITY);
         } else {
             launcher.setVelocity(0);
