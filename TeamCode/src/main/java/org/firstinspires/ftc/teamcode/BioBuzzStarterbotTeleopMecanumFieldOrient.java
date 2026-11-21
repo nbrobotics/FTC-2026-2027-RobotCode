@@ -64,9 +64,13 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
     private DcMotor rightBackDrive = null;
     private DcMotorEx launcher = null;
     private DcMotor intake = null;
+    private CRServo shotBlockA = null;
+    private CRServo secondBlockB = null;
     private CRServo leftIntakeServo = null;
     private CRServo rightIntakeServo = null;
     private CRServo windmillServo = null;
+    private CRServo secondWindmill = null;
+
     private IMU imu;
 
     public boolean lightidle = true;
@@ -123,6 +127,12 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
         windmillServo = hardwareMap.get(CRServo.class, "windmillServo");
         leftIntakeServo = hardwareMap.get(CRServo.class, "left_intake_servo");
         rightIntakeServo = hardwareMap.get(CRServo.class, "right_intake_servo");
+        secondWindmill = hardwareMap.get(CRServo.class, "secondWindmill");
+        shotBlockA = hardwareMap.get(CRServo.class, "shotBlockA");
+        secondBlockB = hardwareMap.get(CRServo.class, "secondBlockB");
+
+
+
 
         /*
          * To drive forward, most robots need the motor on one side to be reversed,
@@ -156,6 +166,7 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
         leftBackDrive.setZeroPowerBehavior(BRAKE);
         rightBackDrive.setZeroPowerBehavior(BRAKE);
         intake.setZeroPowerBehavior(BRAKE);
+
 
         /*
          * Here we set our launcher to the RUN_USING_ENCODER runmode.
@@ -264,6 +275,7 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
             }
 
         unjam();
+        deflector();
 
         /*
          * Here we set our intake motor and servos to their intake power. The order of operations
@@ -288,6 +300,20 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
     private void unjam() {
         if (gamepad1.b) {
             windmillServo.setPower(-1);
+            secondWindmill.setPower(1);
+        }
+    }
+
+    private void deflector() {
+        if (gamepad1.y) {
+            shotBlockA.setPower(-0.2);
+            secondBlockB.setPower(0.2);
+        } else if (gamepad1.a) {
+            shotBlockA.setPower(0.2);
+            secondBlockB.setPower(-0.2);
+        } else {
+            shotBlockA.setPower(0);
+            secondBlockB.setPower(0);
         }
     }
 
@@ -347,8 +373,10 @@ public class BioBuzzStarterbotTeleopMecanumFieldOrient extends OpMode {
          */
         if (gamepad1.right_bumper && launcher.getVelocity() > LAUNCHER_MIN_VELOCITY) {
             windmillServo.setPower(1);
+            secondWindmill.setPower(-1);
             intakePower += 0.5;
         } else {
+            secondWindmill.setPower(0);
             windmillServo.setPower(0);
         }
     }
